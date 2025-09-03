@@ -28,7 +28,7 @@ void on_activate(GtkApplication *app)
     gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
     gtk_window_set_child(GTK_WINDOW(window), start_button);
     g_signal_connect(start_button, "clicked", G_CALLBACK(menugtk), window);
-    gtk_widget_show(window);
+    gtk_widget_set_visible(window, TRUE);
 }
 
 void to_menugtk(GtkWidget *widget, GtkWidget *window)
@@ -67,7 +67,7 @@ void menugtk(GtkApplication *app, GtkWidget *window)
     g_signal_connect(free_mode_button, "clicked", G_CALLBACK(free_mode), window);
     g_signal_connect(settings_button, "clicked", G_CALLBACK(settings), NULL);
     // Show the window
-    gtk_widget_show(window);
+    gtk_widget_set_visible(window, TRUE);
 }
 
 char *get_label_piece(Piece p)
@@ -404,7 +404,7 @@ void init_chess_window(GtkApplication *app, GtkWidget *window)
     // Draw the board
     draw_board(init_co);
     // Show the window
-    gtk_widget_show(window);
+    gtk_widget_set_visible(window, TRUE);
 }
 
 // launch the menu gtk window
@@ -538,7 +538,7 @@ char prompt_promotion(BoardState *board_state, Piece move_piece, Coords init_coo
     g_signal_connect(button_knight, "clicked", G_CALLBACK(on_promotion_button_clicked), promotion_data);
 
     // Show the window
-    gtk_widget_show(promotion_window);
+    gtk_widget_set_visible(promotion_window, TRUE);
 
     // Run the GTK main loop until the window is closed
     GMainContext *context = g_main_context_default();
@@ -557,7 +557,7 @@ char prompt_promotion(BoardState *board_state, Piece move_piece, Coords init_coo
 void display_draw(GtkWidget *window)
 {
     GtkWidget *dialog = gtk_message_dialog_new((GtkWindow *)window, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Draw!");
-    gtk_widget_show(dialog);
+    gtk_widget_set_visible(dialog, TRUE);
     // destroy the dialog
     g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_window_close), dialog);
 }
@@ -566,6 +566,6 @@ void display_victory(char color, GtkWidget *window)
 {
     printf("Checkmate!\n");
     GtkWidget *dialog = gtk_message_dialog_new((GtkWindow *)window, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Victory for %s!", (color == 'w') ? "white" : "black");
-    gtk_widget_show(dialog);
+    gtk_widget_set_visible(dialog, TRUE);
     g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_window_close), dialog);
 }

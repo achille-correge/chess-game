@@ -1,11 +1,11 @@
+#include "types.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
-#include "types.h"
 
 void create_pipes(int pipe_main_to_child[2], int pipe_child_to_main[2])
 {
