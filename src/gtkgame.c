@@ -200,6 +200,28 @@ void engine_play()
     }
     init_co = empty_coords();
     draw_board();
+
+    // print the moves history
+    // printf("Moves history: %s\n", moves_history);
+    // from the moves history, get the last move played by the engine
+    char *last_move_str = strrchr(moves_history, ' ');
+    if (last_move_str == NULL)
+    {
+        last_move_str = moves_history;
+    }
+    else
+    {
+        last_move_str++;
+    }
+    Move last_move;
+    last_move.init_co.y = last_move_str[0] - 'a';
+    last_move.init_co.x = last_move_str[1] - '1';
+    last_move.dest_co.y = last_move_str[2] - 'a';
+    last_move.dest_co.x = last_move_str[3] - '1';
+
+    // color the last move squares in blue
+    gtk_widget_set_name(board_widgets[7 - last_move.init_co.x][last_move.init_co.y], "blue");
+    gtk_widget_set_name(board_widgets[7 - last_move.dest_co.x][last_move.dest_co.y], "blue");
 }
 
 // on_square_clicked function that returns the column and line of the clicked square
@@ -402,7 +424,7 @@ void init_chess_window(GtkApplication *app, GtkWidget *window)
     pos_l = save_position(board_s, pos_l);
     moves_history[0] = '\0';
     // Draw the board
-    draw_board(init_co);
+    draw_board();
     // Show the window
     gtk_widget_set_visible(window, TRUE);
 }
