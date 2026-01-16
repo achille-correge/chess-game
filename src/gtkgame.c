@@ -15,6 +15,7 @@ static char color;
 static bool is_selected = false;
 static Coords init_co;
 GtkWidget *board_widgets[8][8];
+GtkWidget *moves_label;
 
 SubProcess sub_process;
 char engine_color;
@@ -171,6 +172,11 @@ void draw_board()
             }
         }
     }
+
+    // to the right of the board, display the moves history
+    char moves_text[32000];
+    snprintf(moves_text, sizeof(moves_text), "Moves history:\n%s", moves_history);
+    gtk_label_set_text(GTK_LABEL(moves_label), moves_text);
 }
 
 void engine_play()
@@ -203,7 +209,7 @@ void engine_play()
 
     // print the moves history
     // printf("Moves history: %s\n", moves_history);
-    // from the moves history, get the last move played by the engine
+    // from the moves history, get the last move played by the engine. (strrchr to find the last space)
     char *last_move_str = strrchr(moves_history, ' ');
     if (last_move_str == NULL)
     {
@@ -224,7 +230,7 @@ void engine_play()
     gtk_widget_set_name(board_widgets[7 - last_move.dest_co.x][last_move.dest_co.y], "blue");
 }
 
-// on_square_clicked function that returns the column and line of the clicked square
+// on_square_clicked function
 void on_square_clicked(GtkGestureClick *gesture, GtkButton *event, GtkWidget *eventbox)
 {
     int left, top, width, height;
@@ -241,7 +247,7 @@ void on_square_clicked(GtkGestureClick *gesture, GtkButton *event, GtkWidget *ev
     co.y = column;
     if (is_selected)
     {
-        if (can_move(board_s, board_s->board[init_co.x][init_co.y], init_co, co, true) || mode == 4)
+        if (can_move_heuristic(board_s, board_s->board[init_co.x][init_co.y], init_co, co, true) || mode == 4)
         {
             Move move;
             move.init_co = init_co;
@@ -414,6 +420,18 @@ void init_chess_window(GtkApplication *app, GtkWidget *window)
     gtk_widget_set_size_request(menu_button, 60, 30);
     // Connect the button to the callback function
     g_signal_connect(menu_button, "clicked", G_CALLBACK(to_menugtk), window);
+
+    // Init the moves history label with scrolling
+    moves_label = gtk_label_new("Moves history:\n");
+    gtk_label_set_wrap(GTK_LABEL(moves_label), TRUE);
+    gtk_label_set_wrap_mode(GTK_LABEL(moves_label), PANGO_WRAP_WORD);
+    
+    GtkWidget *scrolled_window = gtk_scrolled_window_new();
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+    gtk_widget_set_size_request(scrolled_window, 200, 200);
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), moves_label);
+    
+    gtk_grid_attach(GTK_GRID(gtk_widget_get_parent(board_widgets[0][0])), scrolled_window, 9, 0, 1, 2);
 
     // Init the chess board state and positions list
     free(board_s);

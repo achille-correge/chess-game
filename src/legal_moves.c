@@ -193,14 +193,10 @@ bool can_move_queen(BoardState *board_s, Coords init_co, Coords dest_co)
 
 bool can_move_king(BoardState *board_s, Piece selected_piece, Coords init_co, Coords dest_co)
 {
+    // doesn't take into account checks
     int newx = dest_co.x;
     int newy = dest_co.y;
     // printf("can_move_king: %c (%d, %d) -> (%d, %d) castling rights: %d %d\n", selected_piece.color, init_co.x, init_co.y, newx, newy, board_s->white_kingside_castlable, board_s->white_queenside_castlable);
-
-    if (is_attacked(board_s, dest_co, selected_piece.color, false))
-    {
-        return false;
-    }
 
     if (abs(newx - init_co.x) <= 1 && abs(newy - init_co.y) <= 1)
     {
